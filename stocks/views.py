@@ -37,6 +37,7 @@ class StockList(APIView):
         num = 0
         while stock.exists():
             stock[num].delete()
+            stock = Stock.objects.all()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class ExchangeDetail(APIView):
@@ -96,6 +97,7 @@ class ExchangeStockDetail(APIView):
         stock = Stock.objects.filter(exchange=pk).filter(symbol=pk2)
         while len(stock) > 50:
             stock[50].delete()
+            stock = Stock.objects.filter(exchange=pk).filter(symbol=pk2)
         stock = Stock.objects.filter(exchange=pk).filter(symbol=pk2)
         serializer = StockSerializer(stock, many=True)
         return Response(serializer.data)
@@ -105,6 +107,7 @@ class ExchangeStockDetail(APIView):
         num = 0
         while stock.exists():
             stock[num].delete()
+            stock = Stock.objects.filter(symbol=pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class StockLatest(APIView):
