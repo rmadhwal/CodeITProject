@@ -5,7 +5,7 @@ from stocks.models import Stock
 class StockSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stock
-        fields = ('time', 'symbol', 'bid', 'ask')
+        fields = ('time', 'symbol', 'bid', 'ask', 'exchange')
 
     def create(self, validated_data):
         """
