@@ -14,7 +14,7 @@ class StockList(APIView):
     Add a /*symbol number*/latest/ to the url to get only the latest stock for a certain symbol
     Add a /exchange/*exchange number*/*symbol number* to the url to get a certain stock for a certain exchange
     OR
-    To see the datasets that we will we working on:
+    To see the datasets that we will we working on: 
     Add a /exchange/*exchange number*/*symbol number*/100 to the url
     
     Our secret now that you have stumbled upon it: Is to calculate a statistic based on the last 100 quotations of each individual stock in each individual exchange:
@@ -109,6 +109,31 @@ class ExchangeStockDetail(APIView):
             stock[num].delete()
             stock = Stock.objects.filter(symbol=pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class ExchangeStockDetailCust(APIView):
+    """
+    Quotation of a specific Exchange stock
+    """
+    def get_object(self, pk):
+        try:
+            stock = Stock.objects.filter(exchange=pk)
+        except Stock.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, pk2, pk3, format=None):
+        stock = Stock.objects.filter(exchange=pk).filter(symbol=pk2)[:pk3]
+        serializer = StockSerializer(stock, many=True)
+        return Response(serializer.data)
+
+    def delete(self, request, pk, format=None):
+        stock = Stock.objects.filter(symbol=pk)
+        num = 0
+        while stock.exists():
+            stock[num].delete()
+            stock = Stock.objects.filter(symbol=pk)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
     
 class StockLatest(APIView):
     def get(self, request, pk, format=None):
